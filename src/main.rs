@@ -1,12 +1,14 @@
+mod caesar_cipher;
+
 fn main() {
-    let mut user_plaintext = String::new();
+    let mut user_input = String::new();
 
     loop {
         println!("Please enter your plaintext:\n");
 
-        user_plaintext.clear();
+        user_input.clear();
 
-        match std::io::stdin().read_line(&mut user_plaintext) {
+        match std::io::stdin().read_line(&mut user_input) {
             Ok(_) => {
                 break;
             }
@@ -16,9 +18,9 @@ fn main() {
         }
     }
 
-    println!("Your input: {}", user_plaintext.trim());
+    println!("Your input: {}", user_input.trim());
 
-    let mut user_process_type = String::new();
+    let mut user_process = String::new();
 
     loop {
         println!("\nSelect a process:");
@@ -26,21 +28,21 @@ fn main() {
         println!("2. Decrypt the ciphertext");
         println!("3. Exit\n");
 
-        user_process_type.clear();
-        if std::io::stdin().read_line(&mut user_process_type).is_err() {
+        user_process.clear();
+        if std::io::stdin().read_line(&mut user_process).is_err() {
             println!("Error reading selection. Please try again:");
             continue;
         }
 
-        match user_process_type.trim() {
+        match user_process.trim() {
             "1" => {
                 println!("\nYou have chosen to encrypt the plaintext.");
-                user_process_type = String::from("ENCRYPT");
+                user_process = String::from("ENCRYPT");
                 break;
             }
             "2" => {
                 println!("\nYou have chosen to decrypt the ciphertext.");
-                user_process_type = String::from("DECRYPT");
+                user_process = String::from("DECRYPT");
                 break;
             }
             "3" => {
@@ -53,5 +55,16 @@ fn main() {
         }
     }
 
-    println!("Your option chosen: {}", user_process_type.trim());
+    println!("Your option chosen: {}", user_process.trim());
+
+    if user_process == "ENCRYPT" {
+        let user_encrypted_text = caesar_cipher::caesar_cipher_encrypt(&user_input, 1);
+        println!("Your encrypted string: {}", user_encrypted_text)
+    } else if user_process == "DECRYPT" {
+        let user_decrypted_text = caesar_cipher::caesar_cipher_decrypt(&user_input, 1);
+        println!("Your decrypted string: {}", user_decrypted_text)
+    } else {
+        println!("Process was unsuccessful. Exiting program");
+        return;
+    }
 }
