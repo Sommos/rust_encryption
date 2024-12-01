@@ -1,120 +1,72 @@
 mod algorithms;
 
 fn main() {
-    let mut user_input = String::new();
-
-    loop {
-        println!("Please enter your plaintext:\n");
-
-        user_input.clear();
-
-        match std::io::stdin().read_line(&mut user_input) {
-            Ok(_) => {
-                break;
-            }
-            Err(e) => {
-                println!("Error: {}. Please try again.", e);
-            }
-        }
-    }
-
-    let mut user_process = String::new();
-
-    loop {
-        println!("\nSelect a process:");
-        println!("1. Encrypt the plaintext");
-        println!("2. Decrypt the ciphertext");
-        println!("3. Exit\n");
-
-        user_process.clear();
-        if std::io::stdin().read_line(&mut user_process).is_err() {
-            println!("Error reading selection. Please try again:\n");
-            continue;
-        }
-
-        match user_process.trim() {
-            "1" => {
-                println!("You have chosen to encrypt the plaintext.\n");
-                user_process = String::from("ENCRYPT");
-                break;
-            }
-            "2" => {
-                println!("You have chosen to decrypt the ciphertext.\n");
-                user_process = String::from("DECRYPT");
-                break;
-            }
-            "3" => {
-                println!("Exiting program\n");
-                return;
-            }
-            _ => {
-                println!("Invalid selection. Please choose 1, 2 or 3.\n");
-            }
-        }
-    }
+    let user_input = get_user_input("Please enter your plaintext: ");
+    let process = get_process();
+    let algorithm_choice = get_algorithm_choice();
     
-    let mut user_algorithm = String::new();
+    if algorithm_choice == 1 {
+        let shift_value = get_shift_value();
 
-    loop {
-        println!("\nSelect a algorithm:");
-        println!("1. Caesar Cipher");
-        println!("2. Exit\n");
-
-        user_algorithm.clear();
-        if std::io::stdin().read_line(&mut user_algorithm).is_err() {
-            println!("Error reading selection. Please try again:\n");
-            continue;
+        if process == "ENCRYPT" {
+            let encrypted_text = algorithms::caesar::caesar_cipher_encrypt(&user_input, shift_value);
+            println!("Encrypted text: {}", encrypted_text);
+        } else if process == "DECRYPT" {
+            let decrypted_text = algorithms::caesar::caesar_cipher_decrypt(&user_input, shift_value);
+            println!("Decrypted text: {}", decrypted_text);
         }
+    }
+}
 
-        match user_algorithm.trim() {
-            "1" => {
-                println!("You have chosen the Caesar Cipher\n");
+fn get_user_input(prompt: &str) -> String {
+    let mut input = String::new();
 
-                let user_shift_value: i32;
+    println!("{}", prompt);
+    std::io::stdin().read_line(&mut input).expect("Failed to read line");
 
-                loop {
-                    println!("Please enter your shift value:\n");
+    input.trim().to_string()
+}
 
-                    let mut input = String::new();
+fn get_process() -> String {
+    loop {
+        println!("Select a process:\n1. Encrypt\n2. Decrypt\n3. Exit");
+        let choice = get_user_input("");
 
-                    match std::io::stdin().read_line(&mut input) {
-                        Ok(_) => {
-                            match input.trim().parse::<i32>() {
-                                Ok(shift) => {
-                                    user_shift_value = shift;
-                                    break;
-                                }
-                                Err(_) => {
-                                    println!("Error: Please enter a valid integer for the shift value.");
-                                }
-                            }
-                        }
-                        Err(e) => {
-                            println!("Error: {}. Please try again.", e);
-                        }
-                    }
-                }
+        match choice.as_str() {
+            "1" => return "ENCRYPT".to_string(),
+            "2" => return "DECRYPT".to_string(),
+            "3" => {
+                println!("Exiting...");
+                std::process::exit(0);
+            },
+            _ => println!("Invalid choice, please try again."),
+        }
+    }
+}
 
-                if user_process == "ENCRYPT" {
-                    let user_encrypted_text = algorithms::caesar::caesar_cipher_encrypt(&user_input, user_shift_value);
-                    println!("Your encrypted string: {}", user_encrypted_text)
-                } else if user_process == "DECRYPT" {
-                    let user_decrypted_text = algorithms::caesar::caesar_cipher_decrypt(&user_input, user_shift_value);
-                    println!("Your decrypted string: {}", user_decrypted_text)
-                } else {
-                    println!("Process was unsuccessful. Exiting program");
-                    return;
-                }
+fn get_algorithm_choice() -> i32 {
+    loop {
+        println!("Select an algorithm:\n1. Caesar Cipher\n2. Exit");
+        let choice = get_user_input("");
 
-                break;
-            }
+        match choice.as_str() {
+            "1" => return 1,
             "2" => {
-                println!("Exiting program\n");
-                return;
-            }
-            _ => {
-                println!("Invalid selection. Please choose 1 or 2.\n");
-            }
+                println!("Exiting...");
+                std::process::exit(0);
+            },
+            _ => println!("Invalid choice, please try again."),
+        }
+    }
+}
+
+fn get_shift_value() -> i32 {
+    loop {
+        let shift_value = get_user_input("Please enter a shift value:");
+        
+        match shift_value.parse::<i32>() {
+            Ok(shift) => return shift,
+            Err(_) => println!("Invalid input, please enter an integer."),
         }
     }
 }
