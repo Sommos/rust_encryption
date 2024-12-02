@@ -1,17 +1,23 @@
 mod algorithms;
 mod user_input;
+mod gui;
 
-fn main() {
-    let user_input = user_input::get_user_input("Please enter your plaintext: ");
-    let process = user_input::get_process();
-    let algorithm_choice = user_input::get_algorithm_choice();
-
-    match algorithm_choice {
-        1 => handle_caesar_cipher(&user_input, &process),
-        2 => handle_vigenere_cipher(&user_input, &process),
-        _ => panic!("Invalid algorithm choice"),
-    }
+fn main() -> Result<(), iced::Error> {
+    // run the app from main function
+    gui::gui_init()
 }
+
+// fn main() {
+//     let user_input = user_input::get_user_input("Please enter your plaintext: ");
+//     let process = user_input::get_process();
+//     let algorithm_choice = user_input::get_algorithm_choice();
+
+//     match algorithm_choice {
+//         1 => handle_caesar_cipher(&user_input, &process),
+//         2 => handle_vigenere_cipher(&user_input, &process),
+//         _ => panic!("Invalid algorithm choice"),
+//     }
+// }
 
 fn handle_caesar_cipher(user_input: &str, process: &str) {
     let shift_value = user_input::get_shift_value();
