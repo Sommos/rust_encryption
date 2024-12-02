@@ -1,7 +1,7 @@
-pub fn caesar_cipher_encrypt(input: &str, shift: i32) -> String {
+pub fn caesar_cipher_encrypt(plain_text: &str, shift: i32) -> String {
     let normalised_shift = ((shift % 26) + 26) % 26;
 
-    input
+    plain_text
         .chars()
         .map(|c| {
             if c.is_ascii_alphabetic() {
@@ -14,10 +14,10 @@ pub fn caesar_cipher_encrypt(input: &str, shift: i32) -> String {
         .collect()
 }
 
-pub fn caesar_cipher_decrypt(input: &str, shift: i32) -> String {
+pub fn caesar_cipher_decrypt(cipher_text: &str, shift: i32) -> String {
     let normalised_shift = ((shift % 26) + 26) % 26;
 
-    input
+    cipher_text
         .chars()
         .map(|c| {
             if c.is_ascii_alphabetic() {
@@ -92,5 +92,13 @@ mod tests {
         let decrypted = caesar_cipher_decrypt(&encrypted, shift);
 
         assert_eq!(decrypted, input);
+    }
+
+    #[test]
+    fn test_caesar_cipher_shift_zero() {
+        let input = "This is a test for no shift";
+        let shift = 0;
+        assert_eq!(caesar_cipher_encrypt(input, shift), input);
+        assert_eq!(caesar_cipher_decrypt(input, shift), input);
     }
 }
